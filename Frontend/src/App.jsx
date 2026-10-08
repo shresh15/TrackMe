@@ -1,7 +1,8 @@
 import "./App.css";
+import LandingPage from "./Components/LandingPage";
 
 function App() {
-  return <h1 className="bg-green-300">Hello </h1>;
+  return <LandingPage />;
 }
 
 export default App;
