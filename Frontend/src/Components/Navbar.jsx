@@ -8,7 +8,7 @@ function Navbar() {
   };
 
   return (
-    <div className="bg-gray-800 text-white p-4 flex justify-between items-center">
+    <div className="bg-black/40 text-white p-4 flex justify-between items-center backdrop-blur-sm">
       <h1 className="text-2xl font-bold">TrackMe</h1>
 
       <button
