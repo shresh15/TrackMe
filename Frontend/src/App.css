@@ -1,1 +1,30 @@
 @import "tailwindcss";
+
+.applications-day-mode [class*="bg-white/"] {
+  background-color: rgb(255 255 255 / 65%);
+}
+
+.applications-day-mode [class*="bg-black/"] {
+  background-color: rgb(255 255 255 / 75%);
+}
+
+.applications-day-mode [class*="border-white/"] {
+  border-color: rgb(20 83 45 / 18%);
+}
+
+.applications-day-mode [class*="text-gray-"],
+.applications-day-mode [class~="text-white"] {
+  color: #374151;
+}
+
+.applications-day-mode [class*="text-green-"] {
+  color: #166534;
+}
+
+.applications-day-mode [class*="text-red-"] {
+  color: #b91c1c;
+}
+
+.applications-day-mode [class*="text-amber-"] {
+  color: #92400e;
+}
