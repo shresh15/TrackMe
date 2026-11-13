@@ -1,6 +1,7 @@
 const express = require("express");
 const db = require("../config/db");
 const authMiddleware = require("../middleware/authMiddleware");
+const sendTelegramNotification = require("../services/telegramNotifications");
 
 const router = express.Router();
 const APPLICATION_STATUSES = [
@@ -45,7 +46,7 @@ async function findOwnedApplication(
   lockForUpdate = false,
 ) {
   const [applications] = await executor.execute(
-    `SELECT id, status, applied_date FROM applications
+    `SELECT id, company_name, position, status, applied_date FROM applications
      WHERE id = ? AND user_id = ?${lockForUpdate ? " FOR UPDATE" : ""}`,
     [applicationId, userId],
   );
@@ -149,6 +150,16 @@ router.post("/", async (req, res) => {
     }
 
     await connection.commit();
+    const notification = await sendTelegramNotification(
+      [
+        "TrackMe - application saved",
+        `Company: ${companyName}`,
+        `Position: ${position || "Not specified"}`,
+        `Status: ${status}`,
+        ...(status !== "Interested" ? [`Date: ${eventDate}`] : []),
+        ...(description ? [`Details: ${description}`] : []),
+      ].join("\n"),
+    );
     return res.status(201).json({
       application: {
         id: result.insertId,
@@ -158,6 +169,7 @@ router.post("/", async (req, res) => {
         applied_date: appliedDate,
         events: event ? [event] : [],
       },
+      notification,
     });
   } catch (error) {
     await connection.rollback();
@@ -212,6 +224,23 @@ router.put("/:id", async (req, res) => {
   });
 });
 
+router.delete("/:id", async (req, res) => {
+  const applicationId = getId(req.params.id);
+  if (!applicationId) {
+    return res.status(400).json({ message: "Invalid application ID." });
+  }
+
+  const [result] = await db.execute(
+    "DELETE FROM applications WHERE id = ? AND user_id = ?",
+    [applicationId, req.userId],
+  );
+  if (result.affectedRows === 0) {
+    return res.status(404).json({ message: "Application not found." });
+  }
+
+  return res.json({ message: "Application deleted." });
+});
+
 router.post("/:id/events", async (req, res) => {
   const applicationId = getId(req.params.id);
   const eventType =
@@ -259,6 +288,16 @@ router.post("/:id/events", async (req, res) => {
     );
     await connection.commit();
 
+    const notification = await sendTelegramNotification(
+      [
+        "TrackMe - application progress update",
+        `Company: ${application.company_name}`,
+        `Position: ${application.position || "Not specified"}`,
+        `Status: ${eventType}`,
+        `Date: ${eventDate}`,
+        ...(description ? [`Details: ${description}`] : []),
+      ].join("\n"),
+    );
     return res.status(201).json({
       event: {
         id: result.insertId,
@@ -269,6 +308,7 @@ router.post("/:id/events", async (req, res) => {
       },
       status: eventType,
       applied_date: appliedDate,
+      notification,
     });
   } catch (error) {
     await connection.rollback();
