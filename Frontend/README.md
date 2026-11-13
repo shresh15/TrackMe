@@ -8,6 +8,7 @@ Instead of maintaining multiple spreadsheets or manually remembering application
 
 - **User Authentication:** Secure registration and login functionality using JWT and password hashing with bcrypt.
 - **Personalized Dashboard:** Manage job applications through an individual user account.
+- **Application Deletion:** Delete an application after confirming; its progress history is removed with it.
 - **Application Management:** Add and maintain job application details, including:
   - Company name
   - Job position
