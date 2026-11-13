@@ -1,0 +1,31 @@
+Implementation order: database pool → server setup 
+→ register/login routes
+→ JWT middleware → frontend form 
+→ protected application routes. 
+
+Test the flow by registering a user, 
+logging in, checking /me, logging out,
+ and confirming protected routes reject 
+ requests without a valid cookie.
+
+ Database pool:
+ A database pool is a manager for reusable connections
+  between your Express server and MySQL.
+   Instead of opening a new MySQL connection
+    for every request, the server borrows one
+     from the pool, runs a query, and releases
+      it for reuse.
+
+To establish a connection between your Node.js/Express 
+backend and your MySQL database and manage 
+ connections efficiently.
+
+ What is process.env?
+process is a global object provided by Node.js.
+process.env contains environment variables 
+accessible to your application.
+
+(variable) => expression is equivalent to
+function(variable) {
+    return expression;
+}
