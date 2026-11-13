@@ -12,8 +12,15 @@ const authMiddleware = require("./middleware/authMiddleware");
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
+const localFrontendOrigin = "http://localhost:5173";
 const frontendOrigin =
-  process.env.FRONTEND_URL || "http://localhost:5173";
+  process.env.VITE_URL?.trim() ||
+  process.env.FRONTEND_URL?.trim() ||
+  localFrontendOrigin;
+const frontendOrigins = [
+  frontendOrigin,
+  ...(process.env.NODE_ENV === "production" ? [] : [localFrontendOrigin]),
+].filter((origin, index, origins) => origins.indexOf(origin) === index);
 
 if (!Number.isInteger(port) || port < 1 || port > 65535) {
   throw new Error("PORT must be an integer between 1 and 65535.");
@@ -21,7 +28,7 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 
 app.use(
   cors({
-    origin: frontendOrigin,
+    origin: frontendOrigins,
     credentials: true,
   }),
 );
@@ -62,7 +69,7 @@ async function startServer() {
   await db.query("SELECT 1");
   app.listen(port, () => {
     console.log(`TrackMe API listening on port ${port}.`);
-    console.log(`Allowed frontend origin: ${frontendOrigin}`);
+    console.log(`Allowed frontend origins: ${frontendOrigins.join(", ")}`);
   });
 }
 
