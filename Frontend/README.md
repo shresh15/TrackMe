@@ -8,6 +8,8 @@ Instead of maintaining multiple spreadsheets or manually remembering application
 
 - **User Authentication:** Secure registration and login functionality using JWT and password hashing with bcrypt.
 - **Personalized Dashboard:** Manage job applications through an individual user account.
+- **Analysis Dashboard:** View application totals, active progress, interviews, offers, and a status breakdown.
+- **Day Mode:** Switch the applications workspace to a light green theme.
 - **Application Deletion:** Delete an application after confirming; its progress history is removed with it.
 - **Application Management:** Add and maintain job application details, including:
   - Company name
